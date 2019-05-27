@@ -1,10 +1,10 @@
 import json
 from collections import Counter
-
+lg = 0
 labels = ['SUPPORTS','REFUTES','NOT ENOUGH INFO']
-with open('recall-70/test.json','r') as resource_f:
-    with open('recall-70/test_results.tsv','r') as score_f:
-        with open('recall-70/test_label.json','w') as result_f:
+with open('recall-70-60/test.json','r') as resource_f:
+    with open('recall-70-60/test_results.tsv','r') as score_f:
+        with open('recall-70-60/test_label.json','w') as result_f:
             my_dict = json.load(resource_f)
             ids = list(my_dict.keys())
             ids.sort()
@@ -44,11 +44,15 @@ with open('recall-70/test.json','r') as resource_f:
                         if float(cur_scores[i]) > cur_max_score:
                             cur_max_score = float(cur_scores[i])
                             cur_max_idx = i
+                    #print(cur_max_idx)
+                    #print(cur_max_score)
                     evidence_labels.append(cur_max_idx)
                     scores[cur_max_idx][1] += cur_max_score
-                    
+                    #print(evidence_labels)
+                    #print(scores)   
                 scores.sort(key = lambda t : t[1], reverse = True)
-                
+                #print(scores)
+                  
                 #final_label_count = Counter(evidence_labels).most_common()
                 #there are only one label
                 if scores[1][1] == 0:
@@ -56,6 +60,8 @@ with open('recall-70/test.json','r') as resource_f:
                 else:
                     if scores[0][0] == 2:
                         final_label = scores[1][0]
+                    else:
+                        final_label = scores[0][0]
                 result_dict[cur_id]['label'] = labels[final_label]
                 if final_label != 2:
                     for i, cur_label in enumerate(evidence_labels):
