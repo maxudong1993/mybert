@@ -1,6 +1,8 @@
 import json
 from collections import Counter
 lg = 0
+my_max = 1
+my_score = []
 labels = ['SUPPORTS','REFUTES','NOT ENOUGH INFO']
 with open('recall-70-60/test.json','r') as resource_f:
     with open('recall-70-60/test_results.tsv','r') as score_f:
@@ -37,7 +39,6 @@ with open('recall-70-60/test.json','r') as resource_f:
                     if len(cur_scores) != 3:
                         print(cur_id)
                         print(evidence)
-
                     cur_max_idx = 0
                     cur_max_score = float(cur_scores[0])
                     for i in range(1,3):
@@ -46,8 +47,16 @@ with open('recall-70-60/test.json','r') as resource_f:
                             cur_max_idx = i
                     #print(cur_max_idx)
                     #print(cur_max_score)
-                    evidence_labels.append(cur_max_idx)
-                    scores[cur_max_idx][1] += cur_max_score
+                    if cur_max_score < 0.9:
+                        evidence_labels.append(2)
+                        lg += 1
+                        #print(cur_scores)
+                    # if cur_max_score < my_max:
+                    #     my_max = cur_max_score
+                    #     my_score = cur_scores
+                    else:
+                        evidence_labels.append(cur_max_idx)
+                        scores[cur_max_idx][1] += cur_max_score
                     #print(evidence_labels)
                     #print(scores)   
                 scores.sort(key = lambda t : t[1], reverse = True)
@@ -69,6 +78,9 @@ with open('recall-70-60/test.json','r') as resource_f:
                             evidence = evidences[i].split()
                             result_dict[cur_id]['evidence'].append([evidence[0],int(evidence[1])])
             json.dump(result_dict,result_f,indent=4)
+# print(my_max)
+# print(my_score)
+print(lg)
 
 
 

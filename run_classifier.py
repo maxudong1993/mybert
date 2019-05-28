@@ -1,4 +1,9 @@
 # coding=utf-8
+
+#This code model is based on Google AI language Team's code
+#Only the class "MyProcessor" is written by Xudong MA on 19.05.2019
+#My own code is between the comment "My code start" and "My code end".
+
 # Copyright 2018 The Google AI Language Team Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -204,6 +209,7 @@ class DataProcessor(object):
         lines.append(line)
       return lines
 
+# My code start 
 class MyProcessor(DataProcessor):
     def get_train_examples(self, data_dir):
         filename = data_dir + '/train.json'
@@ -219,13 +225,15 @@ class MyProcessor(DataProcessor):
         return ['SUPPORTS','REFUTES','NOT ENOUGH INFO']
 
     def _create_examples(self, filename, set_type):
-        """Creates examples for the training and dev sets."""
         examples = []
         with open(filename,'r') as f:
             my_dict = json.load(f)
+            #If it is a test dataset, the original label will not be used so they can be anythings among our labels
+            #And I use 'SUPPORTS' here
             if set_type == 'test':
                 label = 'SUPPORTS'
                 ids = list(my_dict.keys())
+                #The order of keys we reading from the dictionary is important as it corresponds to the predictions one by one
                 ids.sort()
             else:
                 ids = my_dict.keys()
@@ -242,7 +250,7 @@ class MyProcessor(DataProcessor):
                     guid = "{}-{}-{}".format(set_type,c_id,i)
                     examples.append(InputExample(guid=guid,text_a=text_a,text_b=text_b,label=label))
         return examples
-
+#My code end
 
 class XnliProcessor(DataProcessor):
   """Processor for the XNLI data set."""

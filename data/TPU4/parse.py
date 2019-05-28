@@ -1,10 +1,11 @@
 import json
 from collections import Counter
-
+lg1 =0
+lg2 = 0
 labels = ['SUPPORTS','REFUTES','NOT ENOUGH INFO']
-with open('recall-70/test.json','r') as resource_f:
-    with open('recall-70/test_results.tsv','r') as score_f:
-        with open('recall-70/test_label.json','w') as result_f:
+with open('recall-60/test.json','r') as resource_f:
+    with open('recall-60/test_results.tsv','r') as score_f:
+        with open('recall-60/test_label.json','w') as result_f:
             my_dict = json.load(resource_f)
             ids = list(my_dict.keys())
             ids.sort()
@@ -31,7 +32,8 @@ with open('recall-70/test.json','r') as resource_f:
                     result_dict[cur_id]['label'] = 'NOT ENOUGH INFO'
                     continue
                 evidence_labels = []
-                for evidence in evidences:
+                max_scores = []
+                for k,evidence in enumerate(evidences):
                     scores = score_f.readline().strip().split()
                     if len(scores) != 3:
                         print(cur_id)
@@ -42,7 +44,12 @@ with open('recall-70/test.json','r') as resource_f:
                         if float(scores[i]) > max_score:
                             max_score = float(scores[i])
                             max_idx = i
-                    evidence_labels.append(max_idx)
+                    if max_score < 0.3:
+                        evidence_labels.append(2)
+                    else:
+                        evidence_labels.append(max_idx)
+                    max_scores.append([k,max_score])
+                
                 final_label_count = Counter(evidence_labels).most_common()
                 #there are only one label
                 if len(final_label_count) == 1:
@@ -71,12 +78,18 @@ with open('recall-70/test.json','r') as resource_f:
                         
                 result_dict[cur_id]['label'] = labels[final_label]
                 if final_label != 2:
+                    fit_max_scores = []
                     for i, cur_label in enumerate(evidence_labels):
                         if cur_label == final_label:
-                            evidence = evidences[i].split()
-                            result_dict[cur_id]['evidence'].append([evidence[0],int(evidence[1])])
+                            fit_max_scores.append(max_scores[i])
+                    fit_max_scores.sort(key=lambda x : x[1], reverse = True)
+                    my_range = len(fit_max_scores)
+                    my_range = min(my_range,5)
+                    for j in range(my_range):
+                        idx = fit_max_scores[j][0]
+                        evidence = evidences[idx].split()
+                        result_dict[cur_id]['evidence'].append([evidence[0],int(evidence[1])])        
             json.dump(result_dict,result_f,indent=4)
-
 
 
                     
