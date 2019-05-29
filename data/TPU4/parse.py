@@ -11,19 +11,6 @@ with open('recall-60/test.json','r') as resource_f:
             ids.sort()
             result_dict = {}
             for cur_id in ids:
-                # evidences = my_dict[cur_id]['evidence']
-                # for evidence in evidences:
-                #     scores = score_f.readline().strip().split()
-                #     max_score = float(scores[0])
-                #     max_idx = 0
-                #     for i in range(1,3):
-                #         if float(scores[i]) > max_score:
-                #             max_score = float(scores[i])
-                #             max_idx = i
-                #     result_f.write(str(max_idx)+"  ")
-                #     result_f.write(labels[max_idx])
-                #     result_f.write('\n')
-
                 result_dict[cur_id] = {}
                 result_dict[cur_id]['claim'] = my_dict[cur_id]['claim']
                 result_dict[cur_id]['evidence'] = []
@@ -44,7 +31,7 @@ with open('recall-60/test.json','r') as resource_f:
                         if float(scores[i]) > max_score:
                             max_score = float(scores[i])
                             max_idx = i
-                    if max_score < 0.3:
+                    if max_score < 0.5:
                         evidence_labels.append(2)
                     else:
                         evidence_labels.append(max_idx)
