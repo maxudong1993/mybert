@@ -3,9 +3,9 @@ from collections import Counter
 lg1 =0
 lg2 = 0
 labels = ['SUPPORTS','REFUTES','NOT ENOUGH INFO']
-with open('recall-60/test.json','r') as resource_f:
-    with open('recall-60/test_results.tsv','r') as score_f:
-        with open('recall-60/test_label.json','w') as result_f:
+with open('dev-test/test.json','r') as resource_f:
+    with open('dev-test/test_results.tsv','r') as score_f:
+        with open('dev-test/test_label.json','w') as result_f:
             my_dict = json.load(resource_f)
             ids = list(my_dict.keys())
             ids.sort()
